@@ -1,103 +1,211 @@
-/* Basic Reset */
-* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+/* Reset y Fuentes */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Special+Elite&display=swap');
 
 body {
-    background-color: #f0f2f5;
+    background-color: #333;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    margin: 0;
     padding: 20px;
 }
 
-.disclaimer {
-    background-color: #ffcccc;
-    color: #d8000c;
-    padding: 10px;
-    border: 1px solid #d8000c;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-
-/* Card Structure */
-.dni-card {
-    width: 85mm; /* Standard ID size approx */
-    height: 54mm;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    position: relative;
-    overflow: hidden;
+/* Watermark de seguridad */
+.watermark-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(255, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    pointer-events: none;
+    border: 5px dashed red;
+    box-sizing: border-box;
+}
+.watermark-overlay h1 { color: red; text-transform: uppercase; }
+
+/* Contenedor de la tarjeta */
+.dni-card {
+    width: 85.6mm; /* Tamaño real DNI */
+    height: 53.98mm;
+    background: white;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #ccc;
 }
 
-/* Simulating the complex background with CSS gradients */
-.background-pattern {
+/* --- FONDOS Y PATRONES (Simulación CSS) --- */
+.bg-decoration {
     position: absolute;
     top: 0; left: 0; width: 100%; height: 100%;
     background: 
-        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,255,0.05) 10px, rgba(0,0,255,0.05) 20px),
-        repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,0,0,0.05) 10px, rgba(255,0,0,0.05) 20px);
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(173, 216, 230, 0.2) 10px, rgba(173, 216, 230, 0.2) 12px),
+        repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255, 182, 193, 0.2) 10px, rgba(255, 182, 193, 0.2) 12px);
     z-index: 0;
     pointer-events: none;
 }
 
-.dni-header {
-    background-color: #aed6f1;
-    padding: 5px;
-    text-align: center;
-    font-size: 10px;
-    font-weight: bold;
-    border-bottom: 1px solid #3498db;
-    position: relative;
+/* Guilloche simulado (Patrón de seguridad) */
+.guilloche-1 {
+    position: absolute;
+    bottom: 0; left: 0; width: 100%; height: 30%;
+    background: radial-gradient(circle at 50% 100%, transparent 30%, rgba(0,100,200,0.1) 31%, rgba(0,100,200,0.1) 33%, transparent 34%);
+    background-size: 20px 20px;
+    opacity: 0.5;
     z-index: 1;
 }
 
+/* --- ENCABEZADO --- */
+.dni-header {
+    background: linear-gradient(to bottom, #aed6f1, #d6eaf8);
+    padding: 3px 5px;
+    border-bottom: 1px solid #5dade2;
+    position: relative;
+    z-index: 2;
+    font-size: 8px;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.header-top { display: flex; justify-content: space-between; }
+.header-sub { display: flex; justify-content: space-between; font-size: 7px; opacity: 0.8; }
+
+/* --- CUERPO --- */
 .dni-body {
     display: flex;
     flex: 1;
     padding: 5px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
+    gap: 5px;
 }
 
-.left-column { width: 60%; display: flex; flex-direction: column; }
-.right-column { width: 40%; display: flex; flex-direction: column; align-items: flex-end; }
+.col-left { flex: 1; display: flex; flex-direction: column; }
+.col-right { width: 35%; display: flex; flex-direction: column; align-items: flex-end; }
 
-.photo-placeholder {
-    width: 30mm;
-    height: 35mm;
-    background-color: #ddd;
+/* Foto */
+.photo-box {
+    width: 32mm;
+    height: 38mm;
+    background: #f0f0f0;
     border: 1px solid #999;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 5px;
-    color: #666;
+    position: relative;
+    overflow: hidden;
+}
+.photo-placeholder-text { color: #999; font-weight: bold; }
+/* Simulación de recorte de foto */
+.photo-box::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    border: 2px solid white;
+    border-radius: 50%;
+    width: 80%; height: 80%;
+    margin: auto;
+    box-shadow: 0 0 0 1px #999;
 }
 
-.data-grid { display: flex; flex-direction: column; gap: 2px; font-size: 9px; }
-.field { display: flex; justify-content: space-between; }
-.label { font-weight: bold; color: #333; }
-.value { color: #000; border-bottom: 1px dotted #ccc; min-width: 50px; }
-
-/* Editable state styling */
-[contenteditable="true"]:focus {
-    outline: 2px solid #3498db;
-    background-color: #fffde7;
+/* Grid de datos */
+.data-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    font-size: 9px;
 }
+.row { display: flex; align-items: center; gap: 5px; }
+.label { font-weight: bold; color: #333; min-width: 40px; }
+.value { 
+    border-bottom: 1px dotted #999; 
+    min-width: 30px; 
+    padding: 0 2px;
+}
+.value:focus { background: #fff9c4; outline: 1px solid blue; }
+.small { font-size: 8px; }
 
-.document-number {
-    font-size: 14px;
-    font-weight: bold;
+/* Columna Derecha */
+.doc-number-box {
+    background: #e8f4f8;
+    border: 1px solid #5dade2;
+    padding: 2px 5px;
+    text-align: right;
+    margin-bottom: 10px;
+    width: 100%;
+}
+.doc-label { font-size: 7px; display: block; }
+.doc-value { font-size: 14px; font-weight: bold; font-family: 'Special Elite', monospace; }
+
+.tramite-box {
+    font-size: 8px;
+    text-align: right;
     margin-bottom: auto;
+    width: 100%;
 }
 
-.qr-placeholder {
+.qr-box {
     width: 20mm;
     height: 20mm;
-    background: repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 50% / 2mm 2mm;
+    background: white;
     border: 1px solid #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+.qr-pattern {
+    width: 18mm;
+    height: 18mm;
+    background-image: 
+        linear-gradient(45deg, #000 25%, transparent 25%),
+        linear-gradient(-45deg, #000 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #000 75%),
+        linear-gradient(-45deg, transparent 75%, #000 75%);
+    background-size: 4px 4px;
+    background-position: 0 0, 0 2px, 2px -2px, -2px 0px;
+    opacity: 0.8;
 }
 
+.signature-box {
+    border-top: 1px solid #000;
+    width: 100%;
+    text-align: right;
+    font-family: 'Special Elite', cursive;
+    font-size: 10px;
+    padding-top: 2px;
+    height: 15px;
+    overflow: hidden;
+}
+
+/* Pie */
+.dni-footer {
+    height: 15mm;
+    position: relative;
+    border-top: 1px solid #ccc;
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    padding: 2px 5px;
+    z-index: 2;
+}
+.footer-text {
+    font-size: 8px;
+    font-weight: bold;
+    z-index: 3;
+}
+
+/* Controles */
 .controls { margin-top: 20px; }
-button { padding: 10px 20px; cursor: pointer; }
+button { padding: 10px 20px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+button:hover { background: #0056b3; }
