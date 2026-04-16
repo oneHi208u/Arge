@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#4338ca">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>miArgentina</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        
+        :root {
+            --primary: #4338ca;
+            --primary-dark: #3730a3;
+            --primary-light: #6366f1;
+            --success: #86efac;
+            --success-bg: #dcfce7;
+            --warning-bg: #fce7f3;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --bg: #f3f4f6;
+            --white: #ffffff;
+        }
+        
+        body {
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        #splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+            max-width: 430px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        #splash.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        
+        .splash-logo {
+            font-size: 42px;
+            font-weight: 600;
+            color: white;
+            letter-spacing: -0.5px;
+        }
+        
+        .splash-logo .mi {
+            color: #a5b4fc;
+            font-weight: 500;
+        }
+        
+        .status-bar {
+            background: var(--primary);
+            color: white;
+            padding: 8px 20px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 15px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .status-bar .time {
+            font-variant-numeric: tabular-nums;
+        }
+        
+        .status-bar .icons {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .signal {
+            display: flex;
+            gap: 2px;
+            align-items: flex-end;
+            height: 12px;
+        }
+        
+        .signal-bar {
+            width: 3px;
+            background: white;
+            border-radius: 1px;
+        }
+        
+        .signal-bar:nth-child(1) { height: 4px; }
+        .signal-bar:nth-child(2) { height: 6px; }
+        .signal-bar:nth-child(3) { height: 8px; }
+        .signal-bar:nth-child(4) { height: 10px; }
+        
+        .wifi-icon {
+            width: 16px;
+            height: 12px;
+            position: relative;
+        }
+        
+        .wifi-icon::before {
+            content: '';
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: white;
+            border-radius: 50%;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        
+        .wifi-icon::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 8px;
+            border: 2px solid white;
+            border-bottom: none;
+            border-radius: 16px 16px 0 0;
+            top: 0;
+            left: 0;
+        }
+        
+        .battery {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .battery-body {
+            width: 27px;
+            height: 13px;
+            border: 1.5px solid white;
+            border-radius: 3px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+        
+        .battery-level {
+            width: 73%;
+            height: 100%;
+            background: white;
+            border-radius: 1px;
+        }
+        
+        .battery-cap {
+            width: 2px;
+            height: 7px;
+            background: white;
+            border-radius: 0 1px 1px 0;
+        }
+        
+        .battery-percent {
+            font-size: 12px;
+            margin-left: 2px;
+        }
+        
+        .header {
+            background: var(--primary);
+            color: white;
+            padding: 0 16px 20px;
+            position: relative;
+            border-radius: 0 0 24px 24px;
+            margin-bottom: -20px;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+        }
+        
+        .menu-btn {
+            width: 24px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        
+        .menu-btn span {
+            display: block;
+            height: 2.5px;
+            background: white;
+            border-radius: 2px;
+            width: 100%;
+        }
+        
+        .header-logo {
+            font-size: 22px;
+            font-weight: 600;
+        }
+        
+        .header-logo .mi {
+            color: #a5b4fc;
+            font-weight: 500;
+        }
+        
+        .profile-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #1f2937;
+            overflow: hidden;
+            position: relative;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+        
+        .profile-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .verified-badge {
+            position: absolute;
+            bottom: -2px;
+            right: -2px;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--primary);
+        }
+        
+        .verified-badge::after {
+            content: '✓';
+            color: white;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .greeting {
+            font-size: 20px;
+            font-weight: 500;
+            margin-top: 8px;
+            padding-left: 4px;
+        }
+        
+        .main-content {
+            padding: 28px 16px 100px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .turnos-card {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        
+        .turno-icon {
+            width: 60px;
+            height: 70px;
+            border: 3px solid var(--primary);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            flex-shrink: 0;
+        }
+        
+        .turno-icon::before {
+            content: '';
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 12px;
+            border: 3px solid var(--primary);
+            border-bottom: none;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .turno-number {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--primary);
+            letter-spacing: 2px;
+        }
+        
+        .turno-label {
+            font-size: 10px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 2px;
+        }
+        
+        .turnos-info h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+        
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-block;
+        }
+        
+        .credenciales-card {
+            background: var(--success-bg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        
+        .credenciales-text {
+            font-size: 16px;
+            font-weight: 500;
+            color: #166534;
+            line-height: 1.4;
+        }
+        
+        .credencial-icon {
+            width: 60px;
+            height: 50px;
+            border: 2px solid #166534;
+            border-radius: 8px;
+            position: relative;
+            background: white;
+        }
+        
+        .credencial-icon::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 16px;
+            height: 16px;
+            border: 2px solid #166534;
+            border-radius: 50%;
+        }
+        
+        .credencial-icon::after {
+            content: '';
+            position: absolute;
+            right: 8px;
+            top: 12px;
+            width: 20px;
+            height: 2px;
+            background: #166534;
+            box-shadow: 0 6px 0 #166534, 0 12px 0 #166534;
+        }
+        
+        .check-badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            background: #22c55e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            border: 2px solid var(--success-bg);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text);
+            margin: 24px 0 16px;
+        }
+        
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+        }
+        
+        .menu-item {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 16px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            border: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .menu-item:active {
+            transform: scale(0.95);
+        }
+        
+        .menu-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .menu-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--primary);
+            stroke-width: 1.8;
+            fill: none;
+        }
+        
+        .menu-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .profile-banner {
+            background: var(--warning-bg);
+            border-radius: 16px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 16px;
+        }
+        
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary-light);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .profile-avatar::before {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background: var(--primary-light);
+            border-radius: 50%;
+            position: absolute;
+            top: 8px;
+        }
+        
+        .profile-avatar::after {
+            content: '';
+            width: 40px;
+            height: 20px;
+            background: var(--primary-light);
+            border-radius: 20px 20px 0 0;
+            position: absolute;
+            bottom: 8px;
+        }
+        
+        .profile-progress {
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            border: 3px solid transparent;
+            border-top-color: var(--primary);
+            border-right-color: var(--primary);
+            transform: rotate(45deg);
+        }
+        
+        .banner-text h4 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+        
+        .banner-text p {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 430px;
+            background: var(--white);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 24px;
+            border-top: 1px solid #e5e7eb;
+            z-index: 1000;
+        }
+        
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 4px;
+            border: none;
+            background: none;
+        }
+        
+        .nav-item.active .nav-icon {
+            color: var(--primary);
+        }
+        
+        .nav-item.active .nav-label {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .nav-icon {
+            width: 24px;
+            height: 24px;
+            color: #9ca3af;
+        }
+        
+        .nav-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke-width: 2;
+            fill: none;
+            stroke: currentColor;
+        }
+        
+        .nav-label {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+        
+        .page {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .page.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .page-header {
+            background: var(--primary);
+            color: white;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: sticky;
+            top: 32px;
+            z-index: 99;
+        }
+        
+        .back-btn {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .back-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: white;
+            stroke-width: 2.5;
+            fill: none;
+        }
+        
+        .page-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .document-list {
+            padding: 16px;
+        }
+        
+        .doc-item {
+            background: var(--white);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        
+        .doc-header {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            cursor: pointer;
+            gap: 12px;
+        }
+        
+        .doc-icon {
+            width: 48px;
+            height: 48px;
+            border: 2px solid var(--primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .doc-icon svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--primary);
+            stroke-width: 1.8;
+            fill: none;
+        }
+        
+        .doc-title {
+            flex: 1;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text);
+        }
+        
+        .doc-arrow {
+            width: 24px;
+            height: 24px;
+            color: var(--text-light);
+            transition: transform 0.3s;
+        }
+        
+        .doc-arrow.expanded {
+            transform: rotate(180deg);
+        }
+        
+        .doc-arrow svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .doc-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            border-top: 1px solid #f3f4f6;
+        }
+        
+        .doc-content.expanded {
+            max-height: 500px;
+        }
+        
+        .doc-actions {
+            padding: 20px;
+        }
+        
+        .btn-large {
+            width: 100%;
+            padding: 16px;
+            border-radius: 28px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 12px;
+            border: none;
+        }
+        
+        .btn-solid {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+        
+        .data-source {
+            padding: 0 20px 16px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+        
+        .data-source a {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .info-text {
+            padding: 0 20px 16px;
+            font-size: 14px;
+            color: var(--text);
+            line-height: 1.5;
+        }
+        
+        .info-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: var(--primary);
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .info-icon {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        .dni-container {
+            padding: 16px;
+        }
+        
+        .dni-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .dni-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+        
+        .dni-image-container {
+            background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+            border-radius: 12px;
+            padding: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .dni-image {
+            width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: block;
+        }
+        
+        .dni-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #d1d5db;
+        }
+        
+        .dot.active {
+            background: var(--primary);
+        }
+        
+        .last-update {
+            text-align: center;
+            color: var(--text-light);
+            font-size: 13px;
+            margin: 16px 0;
+        }
+        
+        .dni-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        
+        .dni-action-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px;
+            background: var(--white);
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            cursor: pointer;
+        }
+        
+        .dni-action-btn svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--primary);
+            stroke-width: 2;
+            fill: none;
+        }
+        
+        .qr-section {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .qr-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            cursor: pointer;
+        }
+        
+        .qr-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 500;
+        }
+        
+        .qr-icon {
+            width: 24px;
+            height: 24px;
+        }
+        
+        .dni-visual {
+            background: linear-gradient(135deg, #f0f9ff 0%, #fdf2f8 50%, #fef3c7 100%);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+            min-height: 220px;
+        }
+        
+        .dni-visual::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .dni-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 60px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.4);
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            pointer-events: none;
+        }
+        
+        .dni-content {
+            position: relative;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 16px;
+        }
+        
+        .dni-photo {
+            width: 100px;
+            height: 120px;
+            background: #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .dni-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .dni-data {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .dni-field-label {
+            font-size: 9px;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .dni-field-value {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 8px;
+        }
+        
+        .dni-number-large {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            letter-spacing: 1px;
+        }
+        
+        .dni-footer {
+            grid-column: 1 / -1;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-top: 8px;
+            padding-top: 12px;
+            border-top: 1px dashed rgba(0,0,0,0.1);
+        }
+        
+        .qr-code {
+            width: 80px;
+            height: 80px;
+            background: white;
+            padding: 4px;
+            border-radius: 4px;
+        }
+        
+        .qr-placeholder {
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, #000 25%, transparent 25%),
+                linear-gradient(-45deg, #000 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #000 75%),
+                linear-gradient(-45deg, transparent 75%, #000 75%);
+            background-size: 8px 8px;
+            background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+            background-color: white;
+        }
+        
+        .dni-back-content {
+            padding: 20px;
+        }
+        
+        .dni-back-field {
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        
+        .dni-back-label {
+            font-weight: 700;
+            color: #1f2937;
+            text-transform: uppercase;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+        }
+        
+        .dni-back-value {
+            color: #4b5563;
+            margin-top: 2px;
+        }
+        
+        .official-signature {
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .signature-line {
+            font-family: 'Brush Script MT', cursive;
+            font-size: 18px;
+            color: #1f2937;
+        }
+        
+        .official-title {
+            font-size: 9px;
+            color: #6b7280;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .refresh-btn {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+        }
+        
+        .refresh-btn svg {
+            width: 100%;
+            height: 100%;
+            stroke: white;
+            stroke-width: 2.5;
+            fill: none;
+        }
+        
+        .placeholder-page {
+            padding: 40px 20px;
+            text-align: center;
+            color: var(--text-light);
+        }
+        
+        .placeholder-icon {
+            width: 64px;
+            height: 64px;
+            margin: 0 auto 16px;
+            color: var(--primary-light);
+        }
+        
+        .placeholder-icon svg {
+            width: 100%;
+            height: 100%;
+            stroke: currentColor;
+            stroke-width: 1.5;
+            fill: none;
+        }
+        
+        body::-webkit-scrollbar {
+            display: none;
+        }
+        body {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        
+        @supports (padding-top: env(safe-area-inset-top)) {
+            .status-bar {
+                padding-top: env(safe-area-inset-top);
+            }
+            .bottom-nav {
+                padding-bottom: env(safe-area-inset-bottom);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="splash">
+        <div class="splash-logo"><span class="mi">mi</span>Argentina</div>
+    </div>
+
+    <div class="status-bar">
+        <span class="time" id="clock">4:31</span>
+        <div class="icons">
+            <span class="signal">
+                <span class="signal-bar"></span>
+                <span class="signal-bar"></span>
+                <span class="signal-bar"></span>
+                <span class="signal-bar"></span>
+            </span>
+            <span class="wifi">
+                <span class="wifi-icon"></span>
+            </span>
+            <span class="battery">
+                <span class="battery-body">
+                    <span class="battery-level"></span>
+                </span>
+                <span class="battery-cap"></span>
+                <span class="battery-percent">73</span>
+            </span>
+        </div>
+    </div>
+
+    <div id="page-home" class="page active">
+        <div class="header">
+            <div class="header-top">
+                <div class="menu-btn" onclick="toggleMenu()">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <div class="header-logo"><span class="mi">mi</span>Argentina</div>
+                <div class="profile-btn">
+                    <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23374151' width='100' height='100'/%3E%3Ccircle cx='50' cy='35' r='20' fill='%239ca3af'/%3E%3Cellipse cx='50' cy='85' rx='35' ry='25' fill='%239ca3af'/%3E%3C/svg%3E" alt="Profile">
+                    <div class="verified-badge"></div>
+                </div>
+            </div>
+            <div class="greeting">¡Hola Mariano ismael!</div>
+        </div>
+
+        <div class="main-content">
+            <div class="card turnos-card">
+                <div class="turno-icon">
+                    <div class="turno-number">001</div>
+                    <div class="turno-label">TURNO</div>
+                </div>
+                <div class="turnos-info">
+                    <h3>No tenés turnos programados.</h3>
+                    <button class="btn-primary">Solicitalo acá</button>
+                </div>
+            </div>
+
+            <div class="card credenciales-card">
+                <div class="credenciales-text">¡Todas tus credenciales<br>están al día!</div>
+                <div class="credencial-icon">
+                    <div class="check-badge">✓</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">¿Qué necesitás hoy?</h2>
+            <div class="menu-grid">
+                <button class="menu-item" onclick="navigateTo('documentos')">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 9h8M8 13h8M8 17h5"/></svg>
+                    </div>
+                    <span class="menu-label">Documentos</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><path d="M5 17a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2M5 17h14"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+                    </div>
+                    <span class="menu-label">Vehículos</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    </div>
+                    <span class="menu-label">Trabajo</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    </div>
+                    <span class="menu-label">Salud</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="2"/><path d="M6 10h.01M6 14h.01"/></svg>
+                    </div>
+                    <span class="menu-label">Cobros</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                    </div>
+                    <span class="menu-label">Trámites</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9zM9 4v5M15 4v5M9 15v5M15 15v5"/></svg>
+                    </div>
+                    <span class="menu-label">Turnos</span>
+                </button>
+                <button class="menu-item">
+                    <div class="menu-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <span class="menu-label">Hijos</span>
+                </button>
+            </div>
+
+            <div class="profile-banner">
+                <div class="profile-avatar">
+                    <div class="profile-progress"></div>
+                </div>
+                <div class="banner-text">
+                    <h4>Completá tu perfil</h4>
+                    <p>Mantené todos tus datos actualizados</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-documentos" class="page">
+        <div class="page-header">
+            <div class="back-btn" onclick="navigateTo('home')">
+                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </div>
+            <span class="page-title">Documentos</span>
+        </div>
+        
+        <div class="document-list">
+            <div class="doc-item">
+                <div class="doc-header" onclick="toggleDoc(this)">
+                    <div class="doc-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 10h3M15 14h3"/></svg>
+                    </div>
+                    <span class="doc-title">Documento Nacional de Identidad (DNI)</span>
+                    <div class="doc-arrow">
+                        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="doc-content">
+                    <div class="doc-actions">
+                        <button class="btn-large btn-solid" onclick="navigateTo('dni')">Ver DNI Digital</button>
+                    </div>
+                    <div class="data-source">Datos suministrados por <a href="#">RENAPER</a></div>
+                    <div class="info-text">Recordá que podés solicitar el DNI para vos y tus hijos y tenerlos disponibles en la App.</div>
+                    <button class="btn-large btn-outline">Solicitar DNI Digital</button>
+                    <div class="info-row">
+                        <div class="info-icon">i</div>
+                        <span>Cambié o voy a cambiar de dispositivo</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="doc-item">
+                <div class="doc-header" onclick="toggleDoc(this)">
+                    <div class="doc-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M6 9h.01M6 13h.01"/></svg>
+                    </div>
+                    <span class="doc-title">Licencia Nacional de Conducir</span>
+                    <div class="doc-arrow">
+                        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+                <div class="doc-content">
+                    <div class="doc-actions">
+                        <button class="btn-large btn-solid">Ver Licencia Digital</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-dni" class="page">
+        <div class="page-header" style="position: relative;">
+            <div class="back-btn" onclick="navigateTo('documentos')">
+                <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+            </div>
+            <span class="page-title">DNI Digital</span>
+            <div class="refresh-btn" onclick="refreshDNI()">
+                <svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+            </div>
+        </div>
+
+        <div class="dni-container">
+            <div class="dni-card">
+                <h2 class="dni-name">Mariano Ismael Alvarez Peñas</h2>
+                
+                <div class="dni-image-container" id="dni-slider">
+                    <div class="dni-visual" id="dni-frente">
+                        <div class="argentina-seal">
+                            <svg viewBox="0 0 40 40">
+                                <circle cx="20" cy="20" r="18" fill="none" stroke="#3b82f6" stroke-width="2"/>
+                                <path d="M20 5 L22 15 L32 15 L24 22 L27 32 L20 25 L13 32 L16 22 L8 15 L18 15 Z" fill="#fbbf24"/>
+                                <circle cx="20" cy="20" r="8" fill="#3b82f6"/>
+                            </svg>
+                        </div>
+                        <div class="dni-watermark">DNI</div>
+                        <div class="dni-content">
+                            <div class="dni-photo">
+                                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 120'%3E%3Crect fill='%23e5e7eb' width='100' height='120'/%3E%3Ccircle cx='50' cy='40' r='25' fill='%239ca3af'/%3E%3Cellipse cx='50' cy='100' rx='40' ry='30' fill='%239ca3af'/%3E%3C/svg%3E" alt="Foto">
+                            </div>
+                            <div class="dni-data">
+                                <div class="dni-field-label">Apellido / Surname</div>
+                                <div class="dni-field-value">ALVAREZ PEÑAS</div>
+                                
+                                <div class="dni-field-label">Nombre / Name</div>
+                                <div class="dni-field-value">Mariano Ismael</div>
+                                
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                    <div>
+                                        <div class="dni-field-label">Sexo / Sex</div>
+                                        <div class="dni-field-value">M</div>
+                                    </div>
+                                    <div>
+                                        <div class="dni-field-label">Nacionalidad</div>
+                                        <div class="dni-field-value">ARGENTINA</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="dni-field-label">Fecha de nacimiento</div>
+                                <div class="dni-field-value">08 OCT/OCT 2007</div>
+                                
+                                <div class="dni-field-label">Fecha de emisión</div>
+                                <div class="dni-field-value">22 ABR/APR 2021</div>
+                                
+                                <div class="dni-field-label">Fecha de vencimiento</div>
+                                <div class="dni-field-value">22 ABR/APR 2036</div>
+                            </div>
+                        </div>
+                        <div class="dni-footer">
+                            <div>
+                                <div class="dni-field-label">Documento</div>
+                                <div class="dni-number-large">48.397.964</div>
+                            </div>
+                            <div class="qr-code">
+                                <div class="qr-placeholder"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dni-visual" id="dni-dorso" style="display: none;">
+                        <div class="dni-back-content">
+                            <div class="dni-back-field">
+                                <div class="dni-back-label">DOMICILIO:</div>
+                                <div class="dni-back-value">ROGER BALLET N° 280 B° VILLA PG</div>
+                            </div>
+                            <div class="dni-back-field">
+                                <div class="dni-back-label">LUGAR DE NACIMIENTO:</div>
+                                <div class="dni-back-value">ARGENTINA</div>
+                            </div>
+                            <div class="official-signature">
+                                <div class="signature-line">E. de Pedro</div>
+                                <div class="official-title">Dr. Eduardo E. de Pedro<br>Ministro del Interior</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dni-dots">
+                    <div class="dot active" onclick="showDniSide(0)"></div>
+                    <div class="dot" onclick="showDniSide(1)"></div>
+                </div>
+            </div>
+
+            <div class="last-update">Última actualización: <span id="last-update">15/04/2026 4:32:17 p. m. hs</span></div>
+
+            <div class="dni-actions">
+                <button class="dni-action-btn" onclick="toggleDetail()">
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 17c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
+                    Ver detalle
+                </button>
+                <button class="dni-action-btn" onclick="deactivateDNI()">
+                    <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                    Desactivar DNI
+                </button>
+            </div>
+
+            <div class="qr-section">
+                <div class="qr-header" onclick="toggleQR()">
+                    <div class="qr-title">
+                        <svg class="qr-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                            <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                        </svg>
+                        Verifica código QR
+                    </div>
+                    <div class="doc-arrow">
+                        <svg viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="page-novedades" class="page">
+        <div class="page-header">
+            <span class="page-title" style="margin-left: 0;">Novedades</span>
+        </div>
+        <div class="placeholder-page">
+            <div class="placeholder-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <h3>No hay novedades</h3>
+            <p>Próximamente encontrarás aquí las últimas noticias y actualizaciones.</p>
+        </div>
+    </div>
+
+    <div id="page-telefonos" class="page">
+        <div class="page-header">
+            <span class="page-title" style="margin-left: 0;">Teléfonos</span>
+        </div>
+        <div class="placeholder-page">
+            <div class="placeholder-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <h3>Teléfonos útiles</h3>
+            <p>Contactos de emergencia y servicios públicos.</p>
+        </div>
+    </div>
+
+    <div id="page-tina" class="page">
+        <div class="page-header">
+            <span class="page-title" style="margin-left: 0;">Tina</span>
+        </div>
+        <div class="placeholder-page">
+            <div class="placeholder-icon">
+                <svg viewBox="0 0 24 24"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>
+            </div>
+            <h3>Asistente Virtual</h3>
+            <p>Chatea con Tina para resolver tus dudas.</p>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <button class="nav-item active" onclick="navigateTo('home')">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            </div>
+            <span class="nav-label">Inicio</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('novedades')">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <span class="nav-label">Novedades</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('telefonos')">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <span class="nav-label">Teléfonos</span>
+        </button>
+        <button class="nav-item" onclick="navigateTo('tina')">
+            <div class="nav-icon">
+                <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+            </div>
+            <span class="nav-label">Tina</span>
+        </button>
+    </nav>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('splash').classList.add('hidden');
+        }, 2000);
+
+        function updateClock() {
+            const now = new Date();
+            const hours = now.getHours().toString().padStart(2, '0');
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            document.getElementById('clock').textContent = hours + ':' + minutes;
+        }
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        function navigateTo(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            
+            document.querySelectorAll('.nav-item').forEach((item, index) => {
+                item.classList.remove('active');
+                if (page === ['home', 'novedades', 'telefonos', 'tina'][index]) {
+                    item.classList.add('active');
+                }
+            });
+            
+            window.scrollTo(0, 0);
+        }
+
+        function toggleDoc(header) {
+            const content = header.nextElementSibling;
+            const arrow = header.querySelector('.doc-arrow');
+            content.classList.toggle('expanded');
+            arrow.classList.toggle('expanded');
+        }
+
+        let currentDniSide = 0;
+        function showDniSide(side) {
+            currentDniSide = side;
+            document.getElementById('dni-frente').style.display = side === 0 ? 'block' : 'none';
+            document.getElementById('dni-dorso').style.display = side === 1 ? 'block' : 'none';
+            document.querySelectorAll('.dni-dots .dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === side);
+            });
+        }
+
+        let touchStartX = 0;
+        let touchEndX = 0;
+        const dniSlider = document.getElementById('dni-slider');
+        
+        if (dniSlider) {
+            dniSlider.addEventListener('touchstart', e => {
+                touchStartX = e.changedTouches[0].screenX;
+            });
+            
+            dniSlider.addEventListener('touchend', e => {
+                touchEndX = e.changedTouches[0].screenX;
+                handleSwipe();
+            });
+        }
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50) showDniSide(1);
+            if (touchEndX > touchStartX + 50) showDniSide(0);
+        }
+
+        function refreshDNI() {
+            const now = new Date();
+            const date = now.toLocaleDateString('es-AR');
+            const time = now.toLocaleTimeString('es-AR');
+            document.getElementById('last-update').textContent = date + ' ' + time;
+            
+            const btn = document.querySelector('.refresh-btn');
+            btn.style.transform = 'translateY(-50%) rotate(360deg)';
+            btn.style.transition = 'transform 0.5s';
+            setTimeout(() => {
+                btn.style.transform = 'translateY(-50%) rotate(0deg)';
+            }, 500);
+        }
+
+        function toggleDetail() { alert('Detalle del DNI'); }
+        function deactivateDNI() { 
+            if (confirm('¿Deseas desactivar tu DNI Digital?')) alert('DNI Desactivado'); 
+        }
+        function toggleQR() { alert('Verificación QR'); }
+        function toggleMenu() { alert('Menú lateral'); }
+
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js');
+        }
+    </script>
+</body>
+</html>
