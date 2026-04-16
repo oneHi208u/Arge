@@ -1,0 +1,103 @@
+/* Basic Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Arial', sans-serif; }
+
+body {
+    background-color: #f0f2f5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.disclaimer {
+    background-color: #ffcccc;
+    color: #d8000c;
+    padding: 10px;
+    border: 1px solid #d8000c;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Card Structure */
+.dni-card {
+    width: 85mm; /* Standard ID size approx */
+    height: 54mm;
+    background: white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Simulating the complex background with CSS gradients */
+.background-pattern {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: 
+        repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0,0,255,0.05) 10px, rgba(0,0,255,0.05) 20px),
+        repeating-linear-gradient(-45deg, transparent, transparent 10px, rgba(255,0,0,0.05) 10px, rgba(255,0,0,0.05) 20px);
+    z-index: 0;
+    pointer-events: none;
+}
+
+.dni-header {
+    background-color: #aed6f1;
+    padding: 5px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: bold;
+    border-bottom: 1px solid #3498db;
+    position: relative;
+    z-index: 1;
+}
+
+.dni-body {
+    display: flex;
+    flex: 1;
+    padding: 5px;
+    position: relative;
+    z-index: 1;
+}
+
+.left-column { width: 60%; display: flex; flex-direction: column; }
+.right-column { width: 40%; display: flex; flex-direction: column; align-items: flex-end; }
+
+.photo-placeholder {
+    width: 30mm;
+    height: 35mm;
+    background-color: #ddd;
+    border: 1px solid #999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 5px;
+    color: #666;
+}
+
+.data-grid { display: flex; flex-direction: column; gap: 2px; font-size: 9px; }
+.field { display: flex; justify-content: space-between; }
+.label { font-weight: bold; color: #333; }
+.value { color: #000; border-bottom: 1px dotted #ccc; min-width: 50px; }
+
+/* Editable state styling */
+[contenteditable="true"]:focus {
+    outline: 2px solid #3498db;
+    background-color: #fffde7;
+}
+
+.document-number {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: auto;
+}
+
+.qr-placeholder {
+    width: 20mm;
+    height: 20mm;
+    background: repeating-conic-gradient(#000 0% 25%, transparent 0% 50%) 50% / 2mm 2mm;
+    border: 1px solid #000;
+}
+
+.controls { margin-top: 20px; }
+button { padding: 10px 20px; cursor: pointer; }
