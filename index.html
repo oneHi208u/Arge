@@ -3,77 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mockup DNI - Educational Demo</title>
+    <title>Simulador DNI - Demo Educativa</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="disclaimer">
-        ⚠️ EDUCATIONAL MOCKUP ONLY - NOT A VALID DOCUMENT
+    <!-- Advertencia de Seguridad Obligatoria -->
+    <div class="watermark-overlay">
+        <h1>SOLO USO EDUCATIVO / MOCKUP</h1>
+        <p>Este documento no tiene validez legal. Es una demostración técnica de HTML/CSS.</p>
     </div>
 
-    <div class="dni-card" id="dniCard">
-        <!-- Header -->
-        <div class="dni-header">
-            <div class="logo-placeholder">[LOGO]</div>
-            <div class="title">DOCUMENTO NACIONAL DE IDENTIDAD</div>
-            <div class="sub-title">REPUBLICA ARGENTINA - MERCOSUR</div>
-        </div>
-
-        <!-- Main Content Grid -->
-        <div class="dni-body">
-            <!-- Left Side: Photo & Data -->
-            <div class="left-column">
-                <div class="photo-placeholder" contenteditable="true">
-                    [FOTO]
+    <div class="page-container">
+        <!-- Tarjeta DNI -->
+        <div class="dni-card" id="dniCard">
+            
+            <!-- Encabezado -->
+            <div class="dni-header">
+                <div class="header-top">
+                    <span class="left-text">REPUBLICA ARGENTINA - MERCOSUR</span>
+                    <span class="right-text">DOCUMENTO NACIONAL DE IDENTIDAD</span>
                 </div>
-                <div class="data-grid">
-                    <div class="field">
-                        <span class="label">Apellido:</span>
-                        <span class="value" contenteditable="true">ALVAREZ PEÑAS</span>
+                <div class="header-sub">
+                    <span>REGISTRO NACIONAL DE LAS PERSONAS</span>
+                    <span>MINISTERIO DEL INTERIOR</span>
+                </div>
+            </div>
+
+            <!-- Cuerpo Principal -->
+            <div class="dni-body">
+                <!-- Columna Izquierda: Foto y Datos -->
+                <div class="col-left">
+                    <div class="photo-box" contenteditable="false">
+                        <div class="photo-placeholder-text">FOTO</div>
                     </div>
-                    <div class="field">
-                        <span class="label">Nombre:</span>
-                        <span class="value" contenteditable="true">Mariano Ismael</span>
+                    
+                    <div class="data-grid">
+                        <div class="row">
+                            <span class="label">Apellido:</span>
+                            <span class="value" contenteditable="true">ALVAREZ PEÑAS</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Nombre:</span>
+                            <span class="value" contenteditable="true">Mariano Ismael</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Sexo:</span>
+                            <span class="value" contenteditable="true">M</span>
+                            <span class="label small">Nacionalidad:</span>
+                            <span class="value" contenteditable="true">ARGENTINA</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Fecha de nacimiento:</span>
+                            <span class="value" contenteditable="true">08 OCT 2007</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Fecha de emisión:</span>
+                            <span class="value" contenteditable="true">22 ABR 2021</span>
+                        </div>
+                        <div class="row">
+                            <span class="label">Fecha de vencimiento:</span>
+                            <span class="value" contenteditable="true">22 ABR 2036</span>
+                        </div>
                     </div>
-                    <div class="field">
-                        <span class="label">Sexo:</span>
-                        <span class="value" contenteditable="true">M</span>
+                </div>
+
+                <!-- Columna Derecha: Número y Códigos -->
+                <div class="col-right">
+                    <div class="doc-number-box">
+                        <span class="doc-label">Documento</span>
+                        <span class="doc-value" contenteditable="true">48.397.964</span>
                     </div>
-                    <div class="field">
-                        <span class="label">Nacionalidad:</span>
-                        <span class="value" contenteditable="true">ARGENTINA</span>
+                    
+                    <div class="tramite-box">
+                        <span>Trámite Nº</span>
+                        <span contenteditable="true">657229227</span>
                     </div>
-                    <div class="field">
-                        <span class="label">Fecha Nac.:</span>
-                        <span class="value" contenteditable="true">08 OCT 2007</span>
+
+                    <div class="qr-box">
+                        <!-- Simulación de QR con CSS -->
+                        <div class="qr-pattern"></div>
+                    </div>
+
+                    <div class="signature-box" contenteditable="true">
+                        [FIRMA DIGITALIZADA]
                     </div>
                 </div>
             </div>
 
-            <!-- Right Side: Numbers & Expiry -->
-            <div class="right-column">
-                <div class="document-number" contenteditable="true">48.397.964</div>
-                <div class="expiry-date">
-                    <span>Fecha de expiración:</span>
-                    <span contenteditable="true">22 ABR 2036</span>
+            <!-- Pie de página con patrones -->
+            <div class="dni-footer">
+                <div class="footer-patterns">
+                    <!-- Simulación de guilloches con CSS -->
+                    <div class="guilloche-1"></div>
+                    <div class="guilloche-2"></div>
                 </div>
-                <div class="qr-placeholder">[QR CODE]</div>
+                <div class="footer-text">
+                    <span>Ministro:</span>
+                    <span contenteditable="true">Dr. Eduardo E. de Pedro</span>
+                </div>
             </div>
+
+            <!-- Fondo decorativo (Simulado) -->
+            <div class="bg-decoration"></div>
         </div>
 
-        <!-- Footer / Background Pattern Simulation -->
-        <div class="dni-footer">
-            <div class="signature-area" contenteditable="true">[FIRMA]</div>
-            <div class="background-pattern"></div>
+        <!-- Controles -->
+        <div class="controls">
+            <button onclick="downloadCard()">Descargar como Imagen (PNG)</button>
+            <button onclick="resetCard()">Resetear Datos</button>
         </div>
     </div>
 
-    <div class="controls">
-        <button onclick="exportMockup()">Exportar como Imagen (Mockup)</button>
-        <button onclick="resetFields()">Resetear Campos</button>
-    </div>
-
+    <!-- Librería para exportar a imagen -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="script.js"></script>
 </body>
 </html>
