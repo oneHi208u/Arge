@@ -2,355 +2,78 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <meta name="theme-color" content="#4338ca">
-    <title>DNI Digital - República Argentina</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { background: #f3f4f6; font-family: Arial, Helvetica, sans-serif; min-height: 100vh; padding: 0; }
-        
-        /* Header app miArgentina */
-        .app-header { background: #4338ca; color: white; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .back-btn, .refresh-btn { width: 24px; height: 24px; cursor: pointer; }
-        .back-btn svg, .refresh-btn svg { width: 100%; height: 100%; stroke: white; stroke-width: 2.5; fill: none; }
-        .app-title { font-size: 18px; font-weight: 600; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        
-        .container { max-width: 100%; padding: 16px; }
-        .name-card { background: white; border-radius: 16px; padding: 20px; margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .name-input { font-size: 20px; font-weight: 700; color: #1f2937; border: none; width: 100%; background: transparent; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .name-input:focus { outline: none; color: #4338ca; }
-        
-        .dni-container { background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); margin-bottom: 16px; }
-        
-        /* === DNI FRENTE - RÉPLICA EXACTA === */
-        .dni-frente { width: 100%; aspect-ratio: 1.627; background: white; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        .security-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, #e0f7fa 0%, #fff3e0 50%, #fce4ec 100%); }
-        .guilloche-pattern { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.6; background-image: repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(0,100,150,0.03) 2px, rgba(0,100,150,0.03) 4px), repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(150,0,100,0.02) 2px, rgba(150,0,100,0.02) 4px); background-size: 100% 100%; }
-        .security-circle-1 { position: absolute; top: 15%; right: 15%; width: 120px; height: 120px; border: 2px solid rgba(0,150,200,0.15); border-radius: 50%; background: radial-gradient(circle, rgba(0,150,200,0.05) 0%, transparent 70%); }
-        .security-circle-2 { position: absolute; bottom: 20%; right: 10%; width: 80px; height: 80px; border: 1px solid rgba(200,0,100,0.1); border-radius: 50%; }
-        
-        .dni-header-area { display: flex; justify-content: space-between; align-items: flex-start; padding: 8px 12px; position: relative; z-index: 10; }
-        .escudo-container { display: flex; align-items: flex-start; gap: 8px; }
-        .escudo-ar { width: 36px; height: 36px; flex-shrink: 0; }
-        .header-text-block { display: flex; flex-direction: column; gap: 0px; }
-        .text-republica { font-size: 9px; font-weight: 800; color: #1a237e; letter-spacing: 0.5px; line-height: 1.2; }
-        .text-mercosur { font-size: 8px; font-weight: 700; color: #1a237e; letter-spacing: 0.3px; }
-        .text-registro { font-size: 7px; font-weight: 600; color: #1a237e; line-height: 1.1; }
-        .text-ministerio { font-size: 7px; font-weight: 600; color: #1a237e; }
-        .dni-title-right { font-size: 9px; font-weight: 700; color: rgba(0,150,200,0.4); text-align: right; letter-spacing: 1px; }
-        
-        .dni-main-content { display: flex; gap: 12px; padding: 0 12px; position: relative; z-index: 10; }
-        .photo-section { width: 95px; flex-shrink: 0; }
-        .photo-frame-dni { width: 95px; height: 115px; background: #e0e0e0; border: 3px solid white; border-radius: 2px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.15); position: relative; cursor: pointer; }
-        .photo-frame-dni img { width: 100%; height: 100%; object-fit: cover; display: none; }
-        .photo-frame-dni.has-photo img { display: block; }
-        .photo-placeholder-dni { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #9e9e9e; font-size: 10px; text-align: center; }
-        .photo-frame-dni.has-photo .photo-placeholder-dni { display: none; }
-        .photo-placeholder-dni svg { width: 32px; height: 32px; margin-bottom: 4px; stroke: currentColor; fill: none; stroke-width: 1.5; }
-        #photoUpload { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
-        
-        .data-section { flex: 1; display: flex; flex-direction: column; gap: 4px; padding-top: 4px; }
-        .data-line { display: flex; flex-direction: column; gap: 0px; }
-        .data-label-text { font-size: 7px; font-weight: 600; color: #757575; text-transform: capitalize; line-height: 1.2; }
-        .data-input-field { font-size: 12px; font-weight: 700; color: #212121; border: none; background: rgba(255,255,255,0.7); padding: 1px 3px; border-radius: 2px; width: 100%; line-height: 1.3; }
-        .data-input-field:focus { outline: none; background: rgba(255,255,255,0.95); box-shadow: 0 0 0 1px rgba(67, 56, 202, 0.3); }
-        .inline-fields { display: flex; gap: 16px; }
-        .inline-field { display: flex; flex-direction: column; }
-        .inline-field .data-input-field { width: auto; min-width: 30px; }
-        
-        .signature-section-dni { position: absolute; right: 80px; bottom: 65px; text-align: center; }
-        .signature-input-dni { font-family: 'Brush Script MT', 'Segoe Script', cursive; font-size: 18px; color: #424242; border: none; background: transparent; width: 100px; transform: rotate(-10deg); text-align: center; line-height: 1; }
-        .signature-label-dni { font-size: 6px; color: #9e9e9e; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
-        
-        .dni-footer-area { position: absolute; bottom: 0; left: 0; right: 0; display: flex; justify-content: space-between; align-items: flex-end; padding: 8px 12px; z-index: 10; }
-        .document-number-area { display: flex; flex-direction: column; }
-        .doc-label-footer { font-size: 7px; color: #757575; font-weight: 600; }
-        .doc-number-big { font-size: 22px; font-weight: 900; color: #1a237e; letter-spacing: 0.5px; border: none; background: transparent; width: 150px; }
-        .tramite-line { font-size: 8px; color: #616161; margin-top: 2px; }
-        .tramite-input-footer { font-size: 9px; font-weight: 600; color: #424242; border: none; background: transparent; width: 90px; }
-        
-        .barcode-area { display: flex; flex-direction: column; align-items: center; gap: 2px; }
-        .barcode-svg { width: 140px; height: 50px; }
-        
-        /* === DNI DORSO === */
-        .dni-dorso { display: none; width: 100%; aspect-ratio: 1.627; background: white; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.15); }
-        .dni-dorso.active { display: block; }
-        .dorso-bg { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, #e0f7fa 0%, #fff3e0 30%, #fce4ec 70%, #f3e5f5 100%); }
-        .wave-pattern { position: absolute; top: 0; left: 0; right: 0; bottom: 0; opacity: 0.4; background-image: repeating-linear-gradient(0deg, transparent, transparent 8px, rgba(0,100,150,0.05) 8px, rgba(0,100,150,0.05) 10px); }
-        .security-seal { position: absolute; left: 8%; top: 25%; width: 100px; height: 100px; border: 3px solid rgba(0,150,200,0.2); border-radius: 50%; background: radial-gradient(circle, rgba(0,150,200,0.1) 0%, transparent 60%); }
-        .security-seal::before { content: ''; position: absolute; top: 10%; left: 10%; right: 10%; bottom: 10%; border: 2px solid rgba(0,150,200,0.15); border-radius: 50%; }
-        .map-outline { position: absolute; right: 5%; top: 20%; width: 60px; height: 80px; border: 2px solid rgba(0,150,200,0.2); border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; background: rgba(255,255,255,0.3); }
-        
-        .dorso-content-area { position: relative; z-index: 10; padding: 20px; height: 100%; display: flex; flex-direction: column; }
-        .dorso-line { margin-bottom: 12px; }
-        .dorso-label-text { font-size: 11px; font-weight: 700; color: #212121; text-transform: uppercase; letter-spacing: 0.5px; }
-        .dorso-input-field { font-size: 13px; font-weight: 600; color: #424242; border: none; background: rgba(255,255,255,0.6); padding: 4px 6px; border-radius: 3px; width: 100%; margin-top: 2px; }
-        .dorso-input-field:focus { outline: none; background: rgba(255,255,255,0.9); }
-        .official-signature-block { margin-top: auto; text-align: right; padding-top: 40px; }
-        .official-sig-input { font-family: 'Brush Script MT', cursive; font-size: 28px; color: #333; border: none; background: transparent; width: 180px; text-align: right; line-height: 1; }
-        .official-title-text { font-size: 9px; color: #757575; text-transform: uppercase; line-height: 1.4; margin-top: 4px; }
-        
-        .nav-indicator { display: flex; justify-content: center; gap: 10px; margin-top: 12px; }
-        .nav-dot-btn { width: 10px; height: 10px; border-radius: 50%; background: #e0e0e0; cursor: pointer; transition: all 0.3s; }
-        .nav-dot-btn.active { background: #4338ca; transform: scale(1.2); }
-        
-        .action-buttons-container { background: white; border-radius: 16px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-        .action-row-btns { display: flex; gap: 12px; margin-bottom: 12px; }
-        .action-btn-item { flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 12px; font-size: 14px; font-weight: 500; color: #424242; cursor: pointer; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .action-btn-item svg { width: 20px; height: 20px; stroke: #4338ca; stroke-width: 2; fill: none; }
-        .qr-verify-button { width: 100%; display: flex; align-items: center; justify-content: space-between; padding: 16px; background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 12px; cursor: pointer; }
-        .qr-btn-content { display: flex; align-items: center; gap: 12px; font-weight: 500; color: #424242; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .qr-btn-content svg { width: 24px; height: 24px; stroke: #4338ca; stroke-width: 2; fill: none; }
-        
-        .update-info { text-align: center; padding: 16px; color: #757575; font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-        .update-text { margin-bottom: 4px; }
-        .edit-instruction { font-size: 12px; color: #4338ca; font-weight: 500; }
-        
-        @media (max-width: 400px) {
-            .photo-section { width: 80px; }
-            .photo-frame-dni { width: 80px; height: 100px; }
-            .data-input-field { font-size: 11px; }
-            .doc-number-big { font-size: 18px; }
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mockup DNI - Educational Demo</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header class="app-header">
-        <div class="back-btn" onclick="history.back()">
-            <svg viewBox="0 0 24 24"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-        </div>
-        <span class="app-title">DNI Digital</span>
-        <div class="refresh-btn" onclick="refreshDNI()">
-            <svg viewBox="0 0 24 24"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-        </div>
-    </header>
 
-    <div class="container">
-        <div class="name-card">
-            <input type="text" class="name-input" value="Mariano Ismael Alvarez Peñas" id="fullName">
+    <div class="disclaimer">
+        ⚠️ EDUCATIONAL MOCKUP ONLY - NOT A VALID DOCUMENT
+    </div>
+
+    <div class="dni-card" id="dniCard">
+        <!-- Header -->
+        <div class="dni-header">
+            <div class="logo-placeholder">[LOGO]</div>
+            <div class="title">DOCUMENTO NACIONAL DE IDENTIDAD</div>
+            <div class="sub-title">REPUBLICA ARGENTINA - MERCOSUR</div>
         </div>
 
-        <div class="dni-container">
-            <div class="dni-frente" id="dniFrente">
-                <div class="security-bg"></div>
-                <div class="guilloche-pattern"></div>
-                <div class="security-circle-1"></div>
-                <div class="security-circle-2"></div>
-                
-                <div class="dni-header-area">
-                    <div class="escudo-container">
-                        <svg class="escudo-ar" viewBox="0 0 40 40">
-                            <ellipse cx="20" cy="36" rx="12" ry="6" fill="#1976d2" opacity="0.3"/>
-                            <path d="M20 3 L23 16 L37 16 L26 24 L30 37 L20 29 L10 37 L14 24 L3 16 L17 16 Z" fill="#ffc107" stroke="#ff8f00" stroke-width="0.8"/>
-                            <circle cx="20" cy="20" r="7" fill="#1976d2"/>
-                            <line x1="20" y1="5" x2="20" y2="10" stroke="#ffc107" stroke-width="2"/>
-                            <line x1="20" y1="30" x2="20" y2="35" stroke="#ffc107" stroke-width="2"/>
-                            <line x1="5" y1="20" x2="10" y2="20" stroke="#ffc107" stroke-width="2"/>
-                            <line x1="30" y1="20" x2="35" y2="20" stroke="#ffc107" stroke-width="2"/>
-                        </svg>
-                        <div class="header-text-block">
-                            <div class="text-republica">REPUBLICA ARGENTINA - MERCOSUR</div>
-                            <div class="text-registro">REGISTRO NACIONAL DE LAS PERSONAS</div>
-                            <div class="text-ministerio">MINISTERIO DEL INTERIOR</div>
-                        </div>
-                    </div>
-                    <div class="dni-title-right">DOCUMENTO NACIONAL DE IDENTIDAD</div>
+        <!-- Main Content Grid -->
+        <div class="dni-body">
+            <!-- Left Side: Photo & Data -->
+            <div class="left-column">
+                <div class="photo-placeholder" contenteditable="true">
+                    [FOTO]
                 </div>
-
-                <div class="dni-main-content">
-                    <div class="photo-section">
-                        <div class="photo-frame-dni" id="photoFrame">
-                            <img id="userPhoto" src="" alt="Foto">
-                            <div class="photo-placeholder-dni">
-                                <svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
-                                <span>Toca para<br>subir foto</span>
-                            </div>
-                            <input type="file" id="photoUpload" accept="image/*" onchange="handlePhotoUpload(event)">
-                        </div>
+                <div class="data-grid">
+                    <div class="field">
+                        <span class="label">Apellido:</span>
+                        <span class="value" contenteditable="true">ALVAREZ PEÑAS</span>
                     </div>
-
-                    <div class="data-section">
-                        <div class="data-line">
-                            <span class="data-label-text">Apellido / Surname</span>
-                            <input type="text" class="data-input-field" value="ALVAREZ PEÑAS" id="apellido">
-                        </div>
-                        <div class="data-line">
-                            <span class="data-label-text">Nombre / Name</span>
-                            <input type="text" class="data-input-field" value="Mariano Ismael" id="nombre">
-                        </div>
-                        <div class="inline-fields">
-                            <div class="inline-field">
-                                <span class="data-label-text">Sexo / Sex</span>
-                                <input type="text" class="data-input-field" value="M" style="width: 25px;" id="sexo">
-                            </div>
-                            <div class="inline-field" style="flex: 1;">
-                                <span class="data-label-text">Nacionalidad / Nationality Ejemplar</span>
-                                <div style="display: flex; justify-content: space-between;">
-                                    <input type="text" class="data-input-field" value="ARGENTINA" style="flex: 1;" id="nacionalidad">
-                                    <span style="font-size: 11px; font-weight: 700; color: #1a237e; margin-left: 8px;">B</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="data-line">
-                            <span class="data-label-text">Fecha de nacimiento / Date of Birth</span>
-                            <input type="text" class="data-input-field" value="08 OCT/ OCT 2007" id="fechaNac">
-                        </div>
-                        <div class="data-line">
-                            <span class="data-label-text">Fecha de emisión / Date of issue</span>
-                            <input type="text" class="data-input-field" value="22 ABR/ APR 2021" id="fechaEmision">
-                        </div>
-                        <div class="data-line">
-                            <span class="data-label-text">Fecha de vencimiento / Date of expiry</span>
-                            <input type="text" class="data-input-field" value="22 ABR/ APR 2036" id="fechaVenc">
-                        </div>
+                    <div class="field">
+                        <span class="label">Nombre:</span>
+                        <span class="value" contenteditable="true">Mariano Ismael</span>
                     </div>
-                </div>
-
-                <div class="signature-section-dni">
-                    <input type="text" class="signature-input-dni" value="M I A Peñas" id="firmaTitular">
-                    <div class="signature-label-dni">Firma Identificado/ Signature</div>
-                </div>
-
-                <div class="dni-footer-area">
-                    <div class="document-number-area">
-                        <span class="doc-label-footer">Documento / Document</span>
-                        <input type="text" class="doc-number-big" value="48.397.964" id="numeroDoc">
-                        <div class="tramite-line">
-                            Tramite No / Of ident: <input type="text" class="tramite-input-footer" value="657229227" id="numTramite">
-                            <div style="font-size: 8px; color: #9e9e9e; margin-top: 2px;">13185</div>
-                        </div>
+                    <div class="field">
+                        <span class="label">Sexo:</span>
+                        <span class="value" contenteditable="true">M</span>
                     </div>
-                    <div class="barcode-area">
-                        <svg class="barcode-svg" viewBox="0 0 140 50">
-                            <rect x="0" y="0" width="2" height="40" fill="black"/><rect x="4" y="0" width="1" height="40" fill="black"/><rect x="7" y="0" width="3" height="40" fill="black"/><rect x="12" y="0" width="1" height="40" fill="black"/><rect x="15" y="0" width="2" height="40" fill="black"/><rect x="20" y="0" width="1" height="40" fill="black"/><rect x="23" y="0" width="2" height="40" fill="black"/><rect x="28" y="0" width="1" height="40" fill="black"/><rect x="31" y="0" width="3" height="40" fill="black"/><rect x="36" y="0" width="1" height="40" fill="black"/><rect x="40" y="0" width="2" height="40" fill="black"/><rect x="45" y="0" width="1" height="40" fill="black"/><rect x="48" y="0" width="2" height="40" fill="black"/><rect x="53" y="0" width="1" height="40" fill="black"/><rect x="56" y="0" width="3" height="40" fill="black"/><rect x="62" y="0" width="1" height="40" fill="black"/><rect x="65" y="0" width="2" height="40" fill="black"/><rect x="70" y="0" width="1" height="40" fill="black"/><rect x="73" y="0" width="2" height="40" fill="black"/><rect x="78" y="0" width="1" height="40" fill="black"/><rect x="81" y="0" width="3" height="40" fill="black"/><rect x="87" y="0" width="1" height="40" fill="black"/><rect x="90" y="0" width="2" height="40" fill="black"/><rect x="95" y="0" width="1" height="40" fill="black"/><rect x="98" y="0" width="2" height="40" fill="black"/><rect x="103" y="0" width="1" height="40" fill="black"/><rect x="106" y="0" width="3" height="40" fill="black"/><rect x="112" y="0" width="1" height="40" fill="black"/><rect x="115" y="0" width="2" height="40" fill="black"/><rect x="120" y="0" width="1" height="40" fill="black"/><rect x="123" y="0" width="2" height="40" fill="black"/><rect x="128" y="0" width="1" height="40" fill="black"/><rect x="132" y="0" width="2" height="40" fill="black"/><rect x="136" y="0" width="1" height="40" fill="black"/>
-                            <circle cx="75" cy="45" r="4" fill="#1976d2"/>
-                        </svg>
+                    <div class="field">
+                        <span class="label">Nacionalidad:</span>
+                        <span class="value" contenteditable="true">ARGENTINA</span>
+                    </div>
+                    <div class="field">
+                        <span class="label">Fecha Nac.:</span>
+                        <span class="value" contenteditable="true">08 OCT 2007</span>
                     </div>
                 </div>
             </div>
 
-            <div class="dni-dorso" id="dniDorso">
-                <div class="dorso-bg"></div>
-                <div class="wave-pattern"></div>
-                <div class="security-seal"></div>
-                <div class="map-outline"></div>
-                <div class="dorso-content-area">
-                    <div class="dorso-line">
-                        <span class="dorso-label-text">DOMICILIO:</span>
-                        <input type="text" class="dorso-input-field" value="ROGER BALLET N° 280 B° VILLA PG" id="domicilio">
-                    </div>
-                    <div class="dorso-line">
-                        <span class="dorso-label-text">LUGAR DE NACIMIENTO:</span>
-                        <input type="text" class="dorso-input-field" value="ARGENTINA" id="lugarNacimiento">
-                    </div>
-                    <div class="official-signature-block">
-                        <input type="text" class="official-sig-input" value="E. de Pedro" id="firmaOficial">
-                        <div class="official-title-text">
-                            Dr. Eduardo E. de Pedro<br>Ministro del Interior
-                        </div>
-                    </div>
+            <!-- Right Side: Numbers & Expiry -->
+            <div class="right-column">
+                <div class="document-number" contenteditable="true">48.397.964</div>
+                <div class="expiry-date">
+                    <span>Fecha de expiración:</span>
+                    <span contenteditable="true">22 ABR 2036</span>
                 </div>
-            </div>
-
-            <div class="nav-indicator">
-                <div class="nav-dot-btn active" onclick="switchSide(0)" id="dot0"></div>
-                <div class="nav-dot-btn" onclick="switchSide(1)" id="dot1"></div>
+                <div class="qr-placeholder">[QR CODE]</div>
             </div>
         </div>
 
-        <div class="action-buttons-container">
-            <div class="action-row-btns">
-                <button class="action-btn-item" onclick="viewDetail()">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 17c-3.87 0-7-3.13-7-7s3.13-7 7-7 7 3.13 7 7-3.13 7-7 7z"/></svg>
-                    Ver detalle
-                </button>
-                <button class="action-btn-item" onclick="deactivateDNI()">
-                    <svg viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-                    Desactivar DNI
-                </button>
-            </div>
-            <button class="qr-verify-button" onclick="verifyQR()">
-                <div class="qr-btn-content">
-                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-                    Verifica código QR
-                </div>
-                <svg width="20" height="20" viewBox="0 0 24 24" stroke="#9e9e9e" stroke-width="2" fill="none"><path d="M9 18l6-6-6-6"/></svg>
-            </button>
-        </div>
-
-        <div class="update-info">
-            <div class="update-text">Última actualización: <span id="lastUpdateTime">15/04/2026 4:32:17 p. m. hs</span></div>
-            <div class="edit-instruction">✏️ Toca cualquier campo para editar los datos</div>
+        <!-- Footer / Background Pattern Simulation -->
+        <div class="dni-footer">
+            <div class="signature-area" contenteditable="true">[FIRMA]</div>
+            <div class="background-pattern"></div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('fullName').addEventListener('input', function(e) {
-            const parts = e.target.value.trim().split(' ');
-            if (parts.length >= 2) {
-                document.getElementById('apellido').value = parts.slice(-2).join(' ').toUpperCase();
-                document.getElementById('nombre').value = parts.slice(0, -2).join(' ');
-            }
-        });
+    <div class="controls">
+        <button onclick="exportMockup()">Exportar como Imagen (Mockup)</button>
+        <button onclick="resetFields()">Resetear Campos</button>
+    </div>
 
-        ['apellido', 'nombre'].forEach(id => {
-            document.getElementById(id).addEventListener('blur', function() {
-                document.getElementById('fullName').value = document.getElementById('nombre').value + ' ' + document.getElementById('apellido').value;
-            });
-        });
-
-        function handlePhotoUpload(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    document.getElementById('userPhoto').src = evt.target.result;
-                    document.getElementById('photoFrame').classList.add('has-photo');
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function switchSide(side) {
-            const frente = document.getElementById('dniFrente');
-            const dorso = document.getElementById('dniDorso');
-            if (side === 0) {
-                frente.style.display = 'block';
-                dorso.classList.remove('active');
-                document.getElementById('dot0').classList.add('active');
-                document.getElementById('dot1').classList.remove('active');
-            } else {
-                frente.style.display = 'none';
-                dorso.classList.add('active');
-                document.getElementById('dot0').classList.remove('active');
-                document.getElementById('dot1').classList.add('active');
-            }
-        }
-
-        let touchStartX = 0;
-        document.querySelector('.dni-container').addEventListener('touchstart', e => touchStartX = e.changedTouches[0].screenX);
-        document.querySelector('.dni-container').addEventListener('touchend', e => {
-            const diff = touchStartX - e.changedTouches[0].screenX;
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && document.getElementById('dniFrente').style.display !== 'none') switchSide(1);
-                if (diff < 0 && document.getElementById('dniFrente').style.display === 'none') switchSide(0);
-            }
-        });
-
-        function refreshDNI() {
-            const now = new Date();
-            document.getElementById('lastUpdateTime').textContent = now.toLocaleDateString('es-AR') + ' ' + now.toLocaleTimeString('es-AR');
-            const btn = document.querySelector('.refresh-btn');
-            btn.style.transform = 'rotate(360deg)';
-            btn.style.transition = 'transform 0.5s';
-            setTimeout(() => btn.style.transform = 'rotate(0deg)', 500);
-        }
-
-        function viewDetail() { alert('DNI Digital válido en todo el territorio nacional.'); }
-        function deactivateDNI() { if (confirm('¿Desactivar este DNI Digital?')) alert('DNI desactivado'); }
-        function verifyQR() { alert('Escanea para verificar autenticidad'); }
-
-        refreshDNI();
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
